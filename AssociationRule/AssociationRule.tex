@@ -1,0 +1,203 @@
+\documentclass[dvipdfmx, 10pt]{jsarticle}
+\usepackage{mathtools}
+\usepackage[margin=20truemm]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{framed}
+\usepackage{booktabs}
+
+\title{\textbf{相関ルール(Association Rule)}}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{相関ルール(Association Rule)}
+相関ルールとは, XならばYであるという形式で表されるルール. このルールを発見する分析をアソシエーション分析と呼ぶ. 
+アソシエーション分析に伴う困難は, 発生する事象全てをルールとして抽出したのでは, 
+大きなデータに対しては必然的に膨大な量のルールを見つけてしまう事にある. 
+そこでルールの有益度を測る指標としては支持度, 信頼度, リフト値という指標が良く使われる. 
+
+\section*{評価指標}
+代表的な評価指標として支持度(Support), 確信度(Confidence), リフト値(Lift)が挙げられる. 
+データ項目の集合\(I = \{A, B, C, \dots \}\), トランザクションは\(I\)の部分集合,  
+\(T(X)\)は\(X\)を含むトランザクション集合とする. 
+
+\subsection*{支持度(Support)}
+ある相関ルール(\(X \Rightarrow Y\))がどれだけ役立つかを表す指標. 
+全データにおける\(X \cup Y\)が占める割合つまり, \(X \cup Y\)が起きる確率. 
+\(X \cup Y\)を含むデータが多いほど相関ルールは支持される. 
+\(D\)は全データの件数とする. 
+
+\begin{align*}
+    S = \frac{|T(X) \cap T(Y)|}{D} = \frac{|T(X \cup Y)|}{D}
+\end{align*}
+
+\subsection*{確信度(Confidence)}
+ある相関ルール(\(X \Rightarrow Y\))においてXとYの相関の強さを表す指標. Xに続けてYが起こる割合(条件付確率). 
+
+\begin{align*}
+    C = \frac{|T(X) \cap T(Y)|}{|T(X)|} = \frac{|T(X \cup Y)|}{|T(X)|}
+\end{align*}
+
+\subsection*{リフト値(Lift)}
+ある相関ルール(\(X \Rightarrow Y\))においてYの確率が高い場合の確信度はYによるものつまり, 
+相関ルールとしてYの確率にXがどのように影響したかを計る指標が必要となる. それがリフト値である. 
+ある相関ルール(\(X \Rightarrow Y\))のリフト値はXによるYの確率の上昇率を表す. 
+Yの確率\(P(Y)\)とする. Xが起きたときのYの確率(条件付確率)を以下のようにする. 
+
+\begin{align*}
+    P(Y|X) = \frac{|T(X \cap Y)|}{|T(X)|} = \frac{P(X \cap Y)}{P(X)}
+\end{align*}
+
+リフト値が1よりも大きいならばXとYには正の相関がある. 
+
+\begin{align*}
+    L = \frac{P(Y|X)}{P(Y)} 
+    = \frac{P(X \cap Y)}{P(X) P(Y)} 
+    = \frac{C}{P(Y)}
+\end{align*}
+
+\section*{アプリオリアルゴリズム (Apriori Algorithm)}
+支持度と確信度が高いほど相関ルールは有益である. すべてのルールを探索すると計算量が膨大になってしまう. 
+そこで有益でないルールを除外するしきい値として最小支持度, 最小確信度を設定しそれを超えるような相関ルール
+を探査するアルゴリズムを考える. アプリオリアルゴリズムでは, \(Support(P)\)が最小支持度よりも小さければ\(P \subseteq Q\)となる
+\(Support(Q)\)も最小支持度より小さいという性質を利用する. 要素数の少ない集合から\(Support\)を逐次的に計算し, 
+最小支持度を下回る集合と, それを含む集合を除外することで計算量を削減するアルゴリズムである. 
+
+\begin{oframed}
+    データ項目の集合の\(Support\)を求めれば, 支持度と確信度求められる. 
+    \(Support(X) = \frac{|T(X)|}{D}\)とする. 
+
+    (\(X \Rightarrow Y\))の支持度は
+    \begin{align*}
+        S = \frac{|T(X \cup Y)|}{D} = Support(X \cup Y)
+    \end{align*}
+
+    (\(X \Rightarrow Y\))の確信度は
+    \begin{align*}
+        C &= \frac{|T(X \cup Y)|}{|T(X)|}\\
+        &= \frac{\frac{|T(X \cup Y)|}{D}}{\frac{|T(X)|}{D}}\\
+        &= \frac{Support(X \cup Y)}{Support(X)}
+    \end{align*}
+
+    \(P \subseteq Q\)ならば\(Support(P) \geq Support(Q)\)となる. 
+    \begin{align*}
+        & Support(P) \geq Support(Q) \\
+        & \frac{|T(P)|}{D} \geq \frac{|T(Q)|}{D} \\
+        & |T(P)| \geq |T(Q)|
+    \end{align*}
+
+    ほかにも\(Support\)は以下の性質をもつ
+    \begin{align*}
+        Support(P_1 \cup P_2) \geq k
+        \Rightarrow Support(P_1) \geq k, Support(P_2) \geq k
+    \end{align*}
+
+    \begin{align*}
+        Support(P) < k 
+        \Rightarrow Support(Q) < k \indent (P \subseteq Q)
+    \end{align*}
+\end{oframed}
+
+\section*{chatGPTによる試験対策問題}
+\subsection*{問題 1}
+データマイニングにおけるアソシエーションルール分析では、以下の評価指標がよく用いられます。それぞれの指標について、その定義を説明してください。
+
+\begin{enumerate}
+    \item サポート (Support)
+    \item 信頼度 (Confidence)
+    \item リフト値 (Lift)
+\end{enumerate}
+
+(回答)
+データ項目の集合を\(I = \{A, B, C, \dots \}\), トランザクションは\(I\)の部分集合とする. 
+ある事象\(X\)のサポートとは
+事象\(X\)を含むトランザクション集合の要素数を全体のデータ数で割ったもの, 全体に対して\(X\)がどれだけ発生するかを表す. 
+\(T(X)\)は\(X\)を含むトランザクション集合, Dはトランザクション集合の要素数とする. 
+\begin{align*}
+    S(X) = \frac{|T(X)|}{D}
+\end{align*}
+
+ある相関ルール\(X \Rightarrow Y\)の信頼度とは
+\(X\)が発生したときにどれだけ\(Y\)が発生するかの条件付確率, \(X\)と\(Y\)の相関を表す. 
+\begin{align*}
+    C(X \Rightarrow Y) = \frac{|T(X \cup Y)|}{|T(X)|}
+\end{align*}
+
+ある相関ルール\(X \Rightarrow Y\)のリフト値とは
+\(X\)が発生したときにどれだけ\(Y\)が発生する確率が上昇するかを表す指標. 
+信頼度だけではもともと\(Y\)の発生確率が高い場合に適切な判断ができないので, \(X\)の\(Y\)影響度を測るために利用される. 
+リフト値が1より大きい場合は\(X, Y\)には正の相関がある. 
+\begin{align*}
+    L(X \Rightarrow Y) 
+    &= \frac{\frac{T(X \cup Y)}{D}}{\frac{|T(X)|}{D} \frac{|T(Y)|}{D}} \\
+    &= \frac{C(X \Rightarrow Y)}{\frac{|T(Y)|}{D}} \\
+    &= \frac{C(X \Rightarrow Y)}{S(Y)} \\
+\end{align*}
+
+\subsection*{問題 2}
+以下の取引データが与えられています。このデータを基にして、次の問いに答えてください。
+
+\begin{table}[h]
+\centering
+\begin{tabular}{cccccc}
+\toprule
+取引ID & 商品A & 商品B & 商品C & 商品D \\
+\midrule
+1 & ○ & ○ &  & ○ \\
+2 & ○ &  & ○ & ○ \\
+3 & ○ & ○ &  &  \\
+4 &  & ○ & ○ & ○ \\
+5 & ○ & ○ & ○ &  \\
+\bottomrule
+\end{tabular}
+\caption{取引データ}
+\end{table}
+
+\begin{enumerate}
+    \item 商品Aと商品Bの「サポート値」を計算してください。
+    \item 商品A $\rightarrow$ 商品Bというルールの「信頼度」を計算してください。
+    \item 商品A $\rightarrow$ 商品Bというルールの「リフト値」を計算してください。
+    \item 商品A $\rightarrow$ 商品Bというルールが有用なルールといえるか、理由を述べてください。
+\end{enumerate}
+
+(回答1)
+\begin{align*}
+    & S(A) = \frac{4}{5}\\
+    & S(B) = \frac{4}{5}\\
+    & S(A \cap B) = \frac{3}{5}
+\end{align*}
+
+(回答2)
+\begin{align*}
+    C(A \rightarrow B) = \frac{3}{4}
+\end{align*}
+
+(回答3)
+\begin{align*}
+    L(A \rightarrow B) = \frac{3}{4} / S(B) = \frac{3}{4} \frac{5}{4} = \frac{15}{16}
+\end{align*}
+
+サポート値と信頼度は\(0.5\)よりも高いがリフト値が\(1\)を下回っているため, 
+有益なルールではあるが新規性や意外性のあるルールとは言えない. 
+
+\subsection*{問題 3}
+以下のルールのうち、リフト値が高いものを選び、その理由を簡潔に述べなさい。
+
+\begin{enumerate}
+    \item ルールA: 商品X $\rightarrow$ 商品Y (リフト値 = 1.2)
+    \item ルールB: 商品M $\rightarrow$ 商品N (リフト値 = 2.5)
+    \item ルールC: 商品P $\rightarrow$ 商品Q (リフト値 = 0.8)
+\end{enumerate}
+
+(回答)
+ルールB. ある相関ルール\(X \Rightarrow Y\)のリフト値は1を超えると\(X, Y\)に正の相関がある. 
+よって最もリフト値の高いルールBが選ばれる. 
+
+\end{document}
