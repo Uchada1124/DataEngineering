@@ -29,7 +29,7 @@
 情報量の単位として, 対数の底が\(2\)のときはビット, \(e\)のときはナット, \(10\)のときはハートレイと呼ばれる. 
 今後の議論では, 対数の底が\(2\)であるとする. 
 
-定義域である発生確率は\(0 \leq P(a) \leq 1\)なので, 値域である情報量は\(0 \leq I(a) \leq \infty\)となる. 
+定義域である発生確率は\(0 \leq P(a) \leq 1\)なので, 値域である情報量は\(0 \leq I(a) < \infty\)となる. 
 よって情報量は\(P(a) = 1\)のとき最小値\(I(a) = 0\)をとる. 
 
 \section*{エントロピー}
@@ -88,5 +88,160 @@
 \end{align*}
 
 これらのことから\(H(A') - \log J \leq 0 \)を示せた. 
+
+\section*{結合エントロピー}
+\subsection*{結合事象}
+2つの事象系\(A = \{a_1, a_2, \dots a_J\}, B = \{b_1, b_2, \dots b_K\}\)を考える. 
+\(a_j, b_k\)が同時に発生するような事象\((a_j, b_k)\)を結合事象と呼ぶ. 
+この時の事象系を結合事象系と呼び, \(A\)と\(B\)の直積で表す. 
+
+\begin{align*}
+    A \times B = \{(a_j, b_k) \mid a_j \in A, b_k \in B\}
+\end{align*}
+
+\subsection*{結合事象の発生確率}
+結合事象が発生する確率は, まず\(a_j\)が発生し\(a_j\)が発生した条件のもとで\(b_k\)が発生すると考えられる. 
+\(a_j\)と\(b_k\)は対称形なので入れ替えても同様に考えられるので, 
+
+\begin{align*}
+    & P((a_j, b_k)) = P(a_j) P(b_k | a_j) \\
+    & P((a_j, b_k)) = P(b_k) P(a_j | b_k)
+\end{align*}
+
+事象系の性質\(\sum_{j=1}^{K} P(b_k) = 1\)より, 
+
+\begin{align*}
+    \sum_{j=1}^{J} P(a_j, b_k) 
+    &= \sum_{j=1}^{J} P(b_k) P(a_j | b_k) \\
+    &= P(b_k) \sum_{j=1}^{J} P(a_j | b_k) \\
+    &= P(b_k) 
+\end{align*}
+
+\begin{align*}
+    \sum_{j=1}^{K} \sum_{j=1}^{J} P(a_j, b_k) = \sum_{j=1}^{K} P(b_k) = 1
+\end{align*}
+
+入れ替えても同様に考えられるので, 
+
+\begin{align*}
+    \sum_{j=1}^{K} \sum_{j=1}^{J} P(a_j, b_k) = \sum_{j=1}^{K} P(b_k) = \sum_{j=1}^{J} P(a_j) = 1
+\end{align*}
+
+\subsection*{結合エントロピー}
+結合事象\((a_j, b_k)\)の情報量は以下のようになる. 
+
+\begin{align*}
+    I(a_j, b_k) = \log \frac{1}{P(a_j, b_k)}
+\end{align*}
+
+よってすべての結合事象の平均をとることで結合事象系\(A \times B\)のエントロピーが得られる. それを結合エントロピーと呼ぶ. 
+
+\begin{align*}
+    H(A, B) = \sum_{j=1}^{K} \sum_{j=1}^{J} P(a_j, b_k) \log \frac{1}{P(a_j, b_k)}
+\end{align*}
+
+\section*{条件付エントロピー}
+まず事象\(b_k\)が発生した条件のもとで\(a_j\)が発生するような場合を考える. 
+この時の発生確率は条件付確率\(P(a_j | b_k) = \frac{P(a_j, b_k)}{P(b_k)}\)で表せる. 
+よって事象\(b_k\)が発生した条件のもとでの事象系\(A\)のエントロピーは以下のようになる. 
+
+\begin{align*}
+    H(A | b_k) = \sum_{j=1}^{J} P(a_j | b_k) \log \frac{1}{P(a_j | b_k)}
+\end{align*}
+
+これを\(B\)のすべての事象について平均をとると以下のようになる. 
+
+\begin{align*}
+    H(A | B) 
+    &= \sum_{k=1}^{K} P(b_k) H(A | b_k) \\
+    &= \sum_{k=1}^{K} P(b_k) \sum_{j=1}^{J} P(a_j | b_k) \log \frac{1}{P(a_j | b_k)} \\
+    &= \sum_{k=1}^{K} \sum_{j=1}^{J} P(a_j, b_k) \log \frac{1}{P(a_j | b_k)}
+\end{align*}
+
+\(H(A | B)\)は\(B\)をのもとでの\(A\)の条件付エントロピーと呼ばれる. 
+\(A\)の\(B\)に対する曖昧度ともいう. 
+
+\section*{結合エントロピーと条件付エントロピー}
+\subsection*{結合エントロピーと条件付エントロピーの関係性}
+結合エントロピーは条件付エントロピーと事象系\(B\)のエントロピーで表せる. 
+これは\(A\)と\(B\)を知ることはまず\(B\)を知り, \(B\)を知っているもとでの\(A\)を知ることと考えらる. 
+また\(A\)と\(B\)は入れ替え可能. 
+
+\begin{align*}
+    H(A, B) 
+    &= \sum_{j=1}^{K} \sum_{j=1}^{J} P(a_j, b_k) \log \frac{1}{P(a_j, b_k)} \\
+    &= \sum_{j=1}^{K} \sum_{j=1}^{J} P(a_j, b_k) \log \frac{1}{P(b_k) P(a_j | b_k)} \\
+    &= \sum_{j=1}^{K} \sum_{j=1}^{J} P(a_j, b_k) \log \frac{1}{P(b_k)} 
+    + \sum_{j=1}^{K} \sum_{j=1}^{J} P(a_j, b_k) \log \frac{1}{P(a_j | b_k)} \\
+    &= \sum_{j=1}^{K} P(b_k) \log \frac{1}{P(b_k)} 
+    + \sum_{j=1}^{K} \sum_{j=1}^{J} P(a_j, b_k) \log \frac{1}{P(a_j | b_k)} \\
+    & = H(B)+ H(A | B)
+\end{align*}
+
+\begin{align*}
+    H(A, B) = H(A)+ H(B | A)
+\end{align*}
+
+\subsection*{シャノンの補助定理}
+\(0\)以上\(1\)以下の任意の実数\(u_j, v_j, (j = 1, 2, \dots J)\)について
+\(\sum_{j=1}^{J} u_j = 1, \sum_{j=1}^{J} v_j = 1\)を満たすならば以下の不等式が成り立つ. 
+
+\begin{align*}
+    \sum_{j=1}^{J} u_j \log \frac{1}{u_j} \leq \sum_{j=1}^{J} u_j \log \frac{1}{v_j}
+\end{align*}
+
+\(u_j = v_j\)のときに等号成立する. 証明は以下の通り. 
+
+\begin{oframed}
+    左辺引く右辺が\(0\)以下になることを示す. 
+    \begin{align*}
+        \sum_{j=1}^{J} u_j \log \frac{1}{u_j} - \sum_{j=1}^{J} u_j \log \frac{1}{v_j} \leq 0
+    \end{align*}
+
+    \begin{align*}
+        \sum_{j=1}^{J} u_j \log \frac{1}{u_j} - \sum_{j=1}^{J} u_j \log \frac{1}{v_j} 
+        &= \sum_{j=1}^{J} u_j \log \frac{v_j}{u_j} \\
+        &= \frac{1}{\ln 2} \sum_{j=1}^{J} u_j \ln \frac{v_j}{u_j} \\
+        &\leq \frac{1}{\ln 2} \sum_{j=1}^{J} u_j \Big(\frac{v_j}{u_j} -1 \Big) \\
+        &= \frac{1}{\ln 2} \Big( \sum_{j=1}^{J} v_j - \sum_{j=1}^{J} u_j \Big) \\
+        &= \frac{1}{\ln 2} (1 - 1) \\
+        &= 0
+    \end{align*}
+
+    よって示せた. 
+\end{oframed}
+
+\subsection*{結合エントロピーの性質}
+\begin{align*}
+    \sum_{j=1}^{K} \sum_{j=1}^{J} P(a_j, b_k) = 1
+\end{align*}
+
+\begin{align*}
+    \sum_{j=1}^{K} \sum_{j=1}^{J} P(a_j) P(b_k) = 1
+\end{align*}
+
+シャノンの補助定理より, 
+
+\begin{align*}
+    & \sum_{j=1}^{K} \sum_{j=1}^{J} P(a_j, b_k) \frac{1}{P(a_j, b_k)} \\
+    &\leq \sum_{j=1}^{K} \sum_{j=1}^{J} P(a_j, b_k) \frac{1}{P(a_j) P(b_k)} \\
+    &= \sum_{j=1}^{K} \sum_{j=1}^{J} P(a_j, b_k) \frac{1}{P(a_j)} 
+    + \sum_{j=1}^{K} \sum_{j=1}^{J} P(a_j, b_k) \frac{1}{P(b_k)} \\
+    &= \sum_{j=1}^{J} P(a_j) \frac{1}{P(a_j)} + \sum_{j=1}^{K} P(b_k) \frac{1}{P(b_k)} \\
+\end{align*}
+
+したがって, \(H(A,B) \leq H(A) + H(B)\)となる. 等号成立はすべての\(j, k\)について\(P(a_j, b_k) = P(a_j) P(b_k)\)のとき, 
+つまり\(A\)と\(B\)が互いに独立のときである. 
+
+\subsection*{結合エントロピーと条件付エントロピーの関係性}
+\(H(A, B) = H(A)+ H(B | A)\)と\(H(A,B) \leq H(A) + H(B)\)より, \(H(B | A) \leq H(B)\)が成り立つ. 
+これは\(B\)を知ることにより, \(A\)の不確実さが減少することをいみする. 等号成立は\(A\)と\(B\)が互いに独立のときである. 
+
+今までのことをまとめると, エントロピーは以下のような性質をもつ. 
+これは条件が追加されると不確実さが減少すること, 対象とする事象系が増加すれば不確実さも増加することをいみする. 
+
+\begin{align*}
+    0 \leq H(A | B) \leq H(A) \leq H(A, B)
+\end{align*}
 
 \end{document}
